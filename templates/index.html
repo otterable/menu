@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden; /* Prevent scrollbars from appearing */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black; /* Set the background color for the video overlay */
+            position: relative;
+        }
+
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Place behind other elements */
+            object-fit: cover; /* Ensure the video covers the entire screen */
+        }
+
+        .content-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background-color: transparent; /* No need for a background color */
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .logo {
+            max-width: 50%; /* Adjust as needed */
+            width: auto;
+            height: auto;
+        }
+
+        .button {
+            font-weight: bold;
+            border: none;
+            padding: 30px 60px;
+            margin: 25px;
+            cursor: pointer;
+            font-size: 30px;
+            text-decoration: none;
+            display: inline-block;
+            border-radius: 10px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        /* Button colors */
+        /* Define a CSS class for each button color */
+        .button-color-1 { background-color: #003049; color: white; }
+        .button-color-2 { background-color: #D62828; color: white; }
+        .button-color-3 { background-color: #F77F00; color: black; }
+        .button-color-4 { background-color: #FCBF49; color: black; }
+        .button-color-5 { background-color: #EAE2B7; color: black; }
+        .button-color-6 { background-color: #9CB380; color: black; }
+        .button-color-7 { background-color: #1B98E0; color: black; }
+        .button-color-8 { background-color: #2E933C; color: black; }
+
+        /* Adjust logo positioning on mobile */
+        @media (max-width: 768px) {
+            .logo-container {
+                margin-top: 20px; /* Adjust as needed */
+                margin-bottom: 20px;
+                text-align: center;
+            }
+            .logo {
+                max-width: 80%; /* Adjust as needed */
+                width: auto;
+                height: auto;
+                display: block;
+                margin: 0 auto; /* Center the logo horizontally */
+            }
+            
+            /* Enable scrolling on mobile */
+            body {
+                overflow-y: scroll;
+                padding-top: 360px; /* Adjust to accommodate header space */
+            }
+        }
+		
+		 /* Button shadow styles */
+        .button {
+            /* ... your existing button styles ... */
+            box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1), 5px 1px 50px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <video autoplay loop muted class="video-background">
+        <source src="{{ url_for('static', filename='video.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="content-container">
+        <div class="logo-container">
+            <img class="logo" src="{{ url_for('static', filename='logo.png') }}" alt="Logo" id="logo">
+        </div>
+        <div class="button-container">
+            <!-- Assign unique class names to each button for color change -->
+            <a href="http://agentur.ermine.at" class="button button-color-1">Agency</a>
+            <a href="http://3dprintwien.ermine.at" class="button button-color-2">3D Print Wien</a>
+            <a href="http://cargobikes.ermine.at" class="button button-color-3">Cargobikes</a>
+            <a href="http://boardgames.ermine.at" class="button button-color-4">Board games</a>
+            <a href="http://songlooping.ermine.at" class="button button-color-5">Songlooping</a>
+            <a href="http://beyondtouristtraps.ermine.at" class="button button-color-6">Beyond Tourist Traps</a>
+            <a href="http://soundscapes.ermine.at" class="button button-color-7">Soundscapes</a>
+            <a href="http://art.ermine.at" class="button button-color-8">Graphite art</a>
+        </div>
+    </div>
+    <script>
+    // Get references to the logo element and button container
+    const logo = document.getElementById('logo');
+    const buttonContainer = document.querySelector('.button-container');
+    
+    // Define the available button color classes
+    const buttonColorClasses = [
+        'button-color-1',
+        'button-color-2',
+        'button-color-3',
+        'button-color-4',
+        'button-color-5',
+        'button-color-6',
+        'button-color-7',
+        'button-color-8'
+    ];
+
+    // Define the original button labels
+    const originalButtonLabels = [
+        'Agentur',
+        '3D Print Wien',
+        'Cargobikes',
+        'Board games',
+        'Songlooping',
+        'Beyond Tourist Traps',
+        'Soundscapes',
+        'Graphite art'
+    ];
+
+    // Define the replacement button labels
+    const newButtonLabels = [
+        'Agency',
+        '3D Druck Wien',
+        'Lastenräder',
+        'Brettspiele',
+        'Songlooping',
+        'Anti-Touristenfalle-AI-Reiseführer',
+        'Soundscapes',
+        'Graphit-Kunst'
+    ];
+
+    // Define the available logo images
+    const logoImages = [
+        '{{ url_for('static', filename='logo1.png') }}',
+        '{{ url_for('static', filename='logo2.png') }}',
+        '{{ url_for('static', filename='logo3.png') }}',
+        '{{ url_for('static', filename='logo.png') }}'
+    ];
+
+    // Keep track of used color and label indices
+    let usedColorIndices = [];
+    let useOriginalLabels = true;
+    let logoIndex = 0;
+
+    // Function to shuffle an array randomly
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // Function to change button colors and labels
+    function changeButtonColorsAndLabels() {
+        const buttons = document.querySelectorAll('.button');
+
+        // Reset used color indices if all colors have been used
+        if (usedColorIndices.length === buttonColorClasses.length) {
+            usedColorIndices = [];
+        }
+
+        // Shuffle the available color indices and select unused ones
+        const shuffledIndices = shuffleArray([...Array(buttonColorClasses.length).keys()]);
+        const unusedIndices = shuffledIndices.filter(index => !usedColorIndices.includes(index));
+
+        // Apply unused colors and update labels on buttons
+        for (let i = 0; i < buttons.length; i++) {
+            const colorIndex = unusedIndices[i];
+            const colorClass = buttonColorClasses[colorIndex];
+            buttons[i].classList.remove(...buttonColorClasses);
+            buttons[i].classList.add(colorClass);
+
+            // Update labels directly based on toggle
+            if (useOriginalLabels) {
+                buttons[i].textContent = originalButtonLabels[i];
+            } else {
+                buttons[i].textContent = newButtonLabels[i];
+            }
+        }
+
+        // Update used color indices
+        usedColorIndices = unusedIndices;
+
+        // Toggle between original and new labels
+        useOriginalLabels = !useOriginalLabels;
+    }
+
+    // Function to change the logo image
+    function changeLogoImage() {
+        logoIndex = (logoIndex + 1) % logoImages.length;
+        logo.src = logoImages[logoIndex];
+    }
+
+    // Add click event listeners to the logo to trigger color and label change
+    logo.addEventListener('click', () => {
+        changeButtonColorsAndLabels();
+        changeLogoImage();
+    });
+
+    // Scroll to the top of the page on load
+    window.onload = function() {
+        window.scrollTo(0, 0);
+    };
+</script>
